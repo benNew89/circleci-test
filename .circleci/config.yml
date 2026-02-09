@@ -1,15 +1,29 @@
 version: 2.1
 
 jobs:
-  hello-world:
+  say-hello:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:current
+      
     steps:
+      - checkout
       - run:
-          name: Say hello
-          command: echo "Hello world"
+          name: "Say hello"
+          command: "echo Hello, World!"
+      - run:
+          name: "Disable SSH"
+          command: |
+            curl --request PATCH \
+              --url https://circleci.com/api/v2/project/github/benNew89/circleci-test/settings \
+              --header "Circle-Token: $CIRCLE_TOKEN" \
+              --header "Content-Type: application/json" \
+              --data "{
+                \"advanced\": {
+                \"disable_ssh\": true,
+              }
+            }"
 
 workflows:
-  say-hello:
+  say-hello-workflow: 
     jobs:
-      - hello-world
+      - say-hello
